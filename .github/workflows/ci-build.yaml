@@ -99,9 +99,9 @@ jobs:
         file: ${{ matrix.directory }}/Dockerfile
         push: true
         # GCP_REGISTRY_URL, GCP_CREDENTIALS
-        tags: | 
-          ${{ secrets.GCP_REGISTRY_URL }}/app-dev-repo/${{ matrix.image_name }}:latest
-          ${{ secrets.GCP_REGISTRY_URL }}/app-dev-repo/${{ matrix.image_name }}:${{ github.sha }}
+        tags: |
+          ${{ secrets.GCP_REGISTRY_URL }}/${{ matrix.image_name }}:latest
+          ${{ secrets.GCP_REGISTRY_URL }}/${{ matrix.image_name }}:${{ github.sha }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
