@@ -44,6 +44,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
     # git diff
     - name: Check for changes in service directory
@@ -65,7 +67,7 @@ jobs:
       run: dotnet restore
 
     - name: Format
-      if: steps.filter.outouts.changed == 'true'
+      if: steps.filter.outputs.changed == 'true'
       run: dotnet format --verify-no-changes
 
 
