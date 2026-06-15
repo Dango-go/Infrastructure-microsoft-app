@@ -1,0 +1,116 @@
+name: CI/CD Pipeline for Microservices
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'app/**'
+      - '.github/workflows/ci-build.yaml'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        service: [basket, catalog, identity, ordering, webhooks, ord, pay, webapp]
+        include:
+          - service: basket
+            directory: app/src/Basket.API
+            image_name: basket-svc
+          - service: catalog
+            directory: app/src/Catalog.API
+            image_name: catalog-svc
+          - service: identity
+            directory: app/src/Identity.API
+            image_name: identity-svc
+          - service: ordering
+            directory: app/src/Ordering.API
+            image_name: ordering-svc
+          - service: webhooks
+            directory: app/src/Webhooks.API
+            image_name: webhooks-svc
+          - service: ord
+            directory: app/src/OrderProcessor
+            image_name: order-svc
+          - service: pay
+            directory: app/src/PaymentProcessor
+            image_name: payment-svc
+          - service: webapp
+            directory: app/src/WebApp
+            image_name: webapp-svc
+
+    # git clone, fetch
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # git diff
+    - name: Check for changes in service directory
+      id: filter    # (steps.filter.outputs.changed)
+      uses: dorny/paths-filter@v3  
+      with:
+        filters: |
+          changed:
+            - '${{ matrix.directory }}/**'
+
+    - name: Install .Net SDK
+      if: steps.filter.outputs.changed == 'true'
+      uses: actions/setup-dotnet@v4
+      with: 
+        dotnet-version: 8.0.x
+
+    - name: Lint
+      if: steps.filter.outputs.changed == 'true'
+      continue-on-error: true
+      working-directory: ${{ matrix.directory }}
+      run: dotnet format --verify-no-changes
+      
+           
+      # Set up Buildx on our runner for advanced caching and saving in GitHub Cache 
+    - name: Set up Docker Buildx
+      if: steps.filter.outputs.changed == 'true'
+      uses: docker/setup-buildx-action@v3
+
+
+    - name: Log in to GCP
+      uses: google-github-actions/auth@v2
+      with:
+        workload_identity_provider: ${{ secrets.URL_PROVIDER }}  # Address of the Workload Identity Provider. Go with token from GitHub Api.
+        service_account: ${{ secrets.SERVICE_ACCOUNT }}
+
+
+
+    - name: Build and Push to Artifact Registry
+      if: steps.filter.outputs.changed == 'true'
+      uses: docker/build-push-action@v5
+      with:
+        context: ${{ matrix.directory }}
+        file: ${{ matrix.directory }}/Dockerfile
+        push: true
+        # GCP_REGISTRY_URL, GCP_CREDENTIALS
+        tags: | 
+          ${{ secrets.GCP_REGISTRY_URL }}/${{ matrix.image_name }}:latest
+          ${{ secrets.GCP_REGISTRY_URL }}/${{ matrix.image_name }}:${{ github.sha }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+
+      #Security scanning with Trivy (Optional/Placeholder)
+    - name: Run Trivy scanner
+      if: steps.filter.outputs.changed == 'true'
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '${{ matrix.directory }}'
+        severity: 'CRITICAL,HIGH'
+
+      # Update Git Repo 
+  #  - name: Update GitOps Repo
+  #    if: steps.filter.outputs.changed == 'true'
+  #    run: |
+  #      git config --global user.name "github-actions"
+  #      git config --global user.email "
+
+
+    
