@@ -91,6 +91,7 @@ jobs:
 
 
     - name: Log in to GCP
+      if: steps.filter.outputs.changed == 'true'
       uses: google-github-actions/auth@v2
       with:
         workload_identity_provider: ${{ secrets.URL_PROVIDER }}  # Address of the Workload Identity Provider. Go with token from GitHub Api.
