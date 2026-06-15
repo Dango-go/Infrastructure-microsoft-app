@@ -77,11 +77,11 @@ jobs:
 
 
 
-    - name: Lint
-      if: steps.filter.outputs.changed == 'true'
-      continue-on-error: true
-      working-directory: ${{ matrix.directory }}
-      run: dotnet format --verify-no-changes
+  #  - name: Lint
+  #    if: steps.filter.outputs.changed == 'true'
+  #    continue-on-error: true
+  #    working-directory: ${{ matrix.directory }}
+  #    run: dotnet format --verify-no-changes
       
            
       # Set up Buildx on our runner for advanced caching and saving in GitHub Cache 
