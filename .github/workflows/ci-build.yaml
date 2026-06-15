@@ -89,7 +89,7 @@ jobs:
       with:
         workload_identity_provider: ${{ secrets.URL_PROVIDER }}  # Address of the Workload Identity Provider. Go with token from GitHub Api.
         service_account: ${{ secrets.SERVICE_ACCOUNT }}
-        tolen_format: 'access_token'
+        token_format: 'access_token'
 
 
     - name: Login to GAR
@@ -124,6 +124,13 @@ jobs:
         scan-type: 'fs'
         scan-ref: '${{ matrix.directory }}'
         severity: 'CRITICAL,HIGH'
+
+        # TEST
+    - name: Debug Token
+      if: steps.filter.outputs.changed == 'true'
+      run: |
+        echo "Token is: ${{ steps.auth.outputs.access_token }}"
+
 
       # Update Git Repo 
   #  - name: Update GitOps Repo
