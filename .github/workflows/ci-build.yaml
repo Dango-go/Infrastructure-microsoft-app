@@ -10,6 +10,10 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: 'read'  # Allow read access to the repository (for ID token)
+      id-token: 'write' # Allow get and send ID tokens for authentication with GCP
     
     strategy:
       matrix:
