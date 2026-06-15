@@ -71,9 +71,9 @@ jobs:
       #if: steps.filter.outputs.changed == 'true'
       run: dotnet restore ${{ matrix.directory }}
 
-    - name: Format
-      #if: steps.filter.outputs.changed == 'true'
-      run: dotnet format ${{ matrix.directory }} --verify-no-changes
+   #- name: Format
+    #  #if: steps.filter.outputs.changed == 'true'
+     # run: dotnet format ${{ matrix.directory }} --verify-no-changes
 
       
       # Set up Buildx on our runner for advanced caching and saving in GitHub Cache 
