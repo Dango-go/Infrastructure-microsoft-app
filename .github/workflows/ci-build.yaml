@@ -60,6 +60,16 @@ jobs:
       with: 
         dotnet-version: 8.0.x
 
+    - name: Restore dependencies
+      if: steps.filter.outputs.changed == 'true'
+      run: dotnet restore
+
+    - name: Format
+      if: steps.filter.outouts.changed == 'true'
+      run: dotnet format --verify-no-changes
+
+
+
     - name: Lint
       if: steps.filter.outputs.changed == 'true'
       continue-on-error: true
