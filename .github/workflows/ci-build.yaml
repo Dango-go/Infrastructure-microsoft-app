@@ -69,11 +69,11 @@ jobs:
 
     - name: Restore dependencies
       #if: steps.filter.outputs.changed == 'true'
-      run: dotnet restore
+      run: dotnet restore ${{ matrix.directory }}
 
     - name: Format
       #if: steps.filter.outputs.changed == 'true'
-      run: dotnet format --verify-no-changes
+      run: dotnet format ${{ matrix.directory }} --verify-no-changes
 
       
       # Set up Buildx on our runner for advanced caching and saving in GitHub Cache 
