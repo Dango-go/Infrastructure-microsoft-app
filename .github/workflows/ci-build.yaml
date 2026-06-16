@@ -105,6 +105,8 @@ jobs:
           -p:ContainerImageName=${{ secrets.GCP_REGISTRY_URL }}/${{ matrix.image_name }} \
           -p:ContainerImageTag=latest
 
+        docker push ${{ secrets.GCP_REGISTRY_URL }}/${{ matrix.image_name }}:latest
+
 
       #Security scanning with Trivy (Optional/Placeholder)
     - name: Run Trivy scanner
