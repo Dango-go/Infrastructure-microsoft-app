@@ -102,7 +102,8 @@ jobs:
       run: |
         dotnet publish ${{ matrix.directory }} \
           /t:PublishContainer \
-          -p:ContainerImageName=${{ secrets.GCP_REGISTRY_URL }}/${{ matrix.image_name }} \
+          -p:ContainerRegistry=europe-central2-docker.pkg.dev \
+          -p:ContainerRepository=infrastructure-open-telemetry/app-dev-repo/${{ matrix.image_name }} \
           -p:ContainerImageTag=latest
 
         docker push ${{ secrets.GCP_REGISTRY_URL }}/${{ matrix.image_name }}:latest
