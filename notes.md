@@ -1,11 +1,11 @@
-basket-api:v1
-webhook-api:v1
-ordering-api:v1
-order-processor-api:v1
-payment-processor-api:v1
+basket-api:v1 +
+webhook-api:v1 
+ordering-api:v1 +
+order-processor-api:v1 +
+payment-processor-api:v1 +
 identity-api:v1
-catalog-api:v1
-web-app:v1
+catalog-api:v1  +
+web-app:v1 +
 
 
 
